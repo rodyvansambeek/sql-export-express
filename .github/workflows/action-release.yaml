@@ -5,7 +5,6 @@ on:
     paths-ignore:
     - 'LICENSE.txt'
     - 'README.md'
-  pull_request:
   workflow_dispatch:
 
 jobs:
