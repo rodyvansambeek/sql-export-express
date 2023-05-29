@@ -3,8 +3,8 @@ name: ci
 on: 
   pull_request:
   push:
-    tags-ignore:
-    - '*'
+    branches: 
+    - '**'
     paths-ignore:
     - 'LICENSE.txt'
     - 'README.md'
