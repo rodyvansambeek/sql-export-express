@@ -1,5 +1,6 @@
 # configuration file for dotnet-releaser
 profile = "custom"
+
 # Create zip files only for Windows platforms
 [[pack]]
 rid = ["win-x64"]
@@ -28,4 +29,10 @@ repo = "sql-export-express"
 #PublishTrimmed = false
 
 [nuget]
+publish = false
+
+[brew]
+publish = false
+
+[scoop]
 publish = false
