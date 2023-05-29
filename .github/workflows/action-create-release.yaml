@@ -1,11 +1,12 @@
-name: ci
+name: create-release
 
 on: 
   push:
     paths-ignore:
     - 'LICENSE.txt'
     - 'README.md'
-  pull_request:
+    tags:        
+      - '*'
   workflow_dispatch:
 
 jobs:

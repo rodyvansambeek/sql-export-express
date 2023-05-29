@@ -9,13 +9,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Outputs.Csv", "Outputs.Csv\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sources.Mssql", "Sources.Mssql\Sources.Mssql.csproj", "{58F3DCED-F322-421A-BD4F-A5EBFF1D0447}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abstractions", "Abstractions\Abstractions.csproj", "{ABC42D1F-64F9-4969-8E46-711BFCD83197}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abstractions", "Abstractions\Abstractions.csproj", "{ABC42D1F-64F9-4969-8E46-711BFCD83197}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{47F5606C-5E2C-4E30-9B7E-0BC11EC3FB2F}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		.github\workflows\action-release.yaml = .github\workflows\action-release.yaml
+		.github\workflows\action-ci.yaml = .github\workflows\action-ci.yaml
 		dotnet-releaser.toml = dotnet-releaser.toml
+		.github\workflows\action-create-release.yaml = .github\workflows\action-create-release.yaml
 		LICENSE.txt = LICENSE.txt
 		README.md = README.md
 	EndProjectSection
