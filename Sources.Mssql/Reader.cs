@@ -1,5 +1,5 @@
-﻿using Cli.Interfaces;
-using Cli.Source;
+﻿using Abstractions.Models;
+using Abstractions.Source;
 using Dapper;
 using Sources.Mssql.Settings;
 using System.Data.SqlClient;
@@ -8,18 +8,31 @@ namespace Sources.Mssql;
 public class Reader : IDbReader
 {
     private readonly ConnectionSettings _connectionSettings;
-    private readonly string _connectionString;
 
     public Reader(ConnectionSettings connectionSettings)
     {
         _connectionSettings = connectionSettings;
-        _connectionString = DbConnection.CreateConnectionString(_connectionSettings);
     }
 
-    public async Task<IEnumerable<Table>> ScanTablesAsync()
+    public async Task<IEnumerable<Database>> ScanDatabasesAsync()
     {
-        using var connection = new SqlConnection(_connectionString);
-        var sql = @"""
+        string connectionString = DbConnection.CreateConnectionStringGlobal(_connectionSettings);
+        using var connection = new SqlConnection(connectionString);
+        var sql = """
+            SELECT [name]
+            FROM master.sys.databases
+            WHERE Cast(CASE WHEN name IN('master', 'model', 'msdb', 'tempdb') THEN 1 ELSE is_distributor END As bit) = 0
+            """;
+
+        var databases = await connection.QueryAsync<Database>(sql);
+        return databases;
+    }
+
+    public async Task<IEnumerable<DatabaseTable>> ScanTablesAsync(string databaseName)
+    {
+        string connectionString = DbConnection.CreateConnectionStringDatabase(_connectionSettings, databaseName);
+        using var connection = new SqlConnection(connectionString);
+        var sql = """
             SELECT
                   sOBJ.name AS [Name], SUM(sdmvPTNS.row_count) AS [Rows]
             FROM
@@ -32,22 +45,27 @@ public class Reader : IDbReader
                   AND sdmvPTNS.index_id < 2
             GROUP BY
                   sOBJ.schema_id, 
-	              sOBJ.name
-            ORDER BY [TableName]
-            GO""";
+                  sOBJ.name
+            ORDER BY [Name]
+            """;
 
-        var tables = await connection.QueryAsync<Table>(sql);
+        var tables = await connection.QueryAsync<DatabaseTable>(sql);
         return tables;
     }
 
-    public Task<dynamic[]> FetchAsync(Table table, int skip, int take)
+    public async Task<IEnumerable<dynamic>> FetchAsync(string databaseName, string tableName)
     {
-        throw new NotImplementedException();
-    }
+        string connectionString = DbConnection.CreateConnectionStringDatabase(_connectionSettings, databaseName);
+        using var connection = new SqlConnection(connectionString);
 
-    public Task<bool> ConnectToDatabase()
-    {
-        using var connection = new SqlConnection(_connectionString);
-        return Task.FromResult(true);
+        string tableNameExistsCheck = "SELECT count(1) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = @tableName";
+        int tableCount = await connection.ExecuteScalarAsync<int>(tableNameExistsCheck, new { tableName });
+        if (tableCount != 1)
+        {
+            throw new ArgumentException($"Table '{tableName}' does not exist");
+        }
+
+        string sql = string.Format("Select * From [{0}]", tableName);
+        return await connection.QueryAsync<dynamic>(sql);
     }
 }

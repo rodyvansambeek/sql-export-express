@@ -1,0 +1,13 @@
+# configuration file for dotnet-releaser
+[msbuild]
+project = "Cli/Cli.csproj"
+
+[github]
+user = "rodyvansambeek"
+repo = "sql-export-express"
+
+[msbuild.properties]
+#PublishTrimmed = false
+
+[nuget]
+publish = false
