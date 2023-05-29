@@ -1,30 +1,30 @@
 ﻿using Spectre.Console;
 
 namespace Cli.Commands.Options;
-public class CsvSeparatorOption
+public class CsvDelimiterOption
 {
     public static string TryGetPrompt(string? value)
     {
-        string questionPrompt = "[blue]?[/] Which [green]CSV separator[/] symbol do you want to use?";
+        string questionPrompt = "[blue]?[/] Which [green]CSV delimiter[/] symbol do you want to use?";
         if (value != null)
         {
             AnsiConsole.MarkupLine($"{questionPrompt} [green]{value}[/]");
             return value;
         }
 
-        var csvSeparatorPrompt = AnsiConsole.Prompt(
+        var csvDelimiterPrompt = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
             .Title(questionPrompt)
                    .AddChoices(new[] { @"Comma "",""", @"Semicolon "";""" }));
-        string csvSeparator = csvSeparatorPrompt switch
+        string csvDelimiter = csvDelimiterPrompt switch
         {
             @"Comma "",""" => ",",
             @"Semicolon "";""" => ";",
             _ => throw new InvalidOperationException()
         };
 
-        AnsiConsole.MarkupLine($"{questionPrompt} {csvSeparator}");
+        AnsiConsole.MarkupLine($"{questionPrompt} {csvDelimiter}");
 
-        return csvSeparator;
+        return csvDelimiter;
     }
 }

@@ -24,10 +24,10 @@ public class ExportCommandSettings : CommandSettings
     [CommandOption("-a|--all-tables")]
     public bool? AllTables { get; set; }
 
-    [CommandOption("-c|--csv-separator <SYMBOL>")]
-    [Description("The CSV separator symbol to use")]
+    [CommandOption("-c|--csv-delimiter <SYMBOL>")]
+    [Description("The CSV delimiter symbol to use")]
     [DefaultValue(",")]
-    public string? CsvSeparator { get; set; }
+    public string? CsvDelimiter { get; set; }
 
     [CommandOption("-d|--disable-escaping")]
     [Description("Disable the use of double quotes (\"...\") to escape string values")]
