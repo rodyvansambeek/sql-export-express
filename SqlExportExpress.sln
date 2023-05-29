@@ -14,6 +14,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{47F5606C-5E2C-4E30-9B7E-0BC11EC3FB2F}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		.github\workflows\action-release.yaml = .github\workflows\action-release.yaml
 		dotnet-releaser.toml = dotnet-releaser.toml
 		LICENSE.txt = LICENSE.txt
 		README.md = README.md
