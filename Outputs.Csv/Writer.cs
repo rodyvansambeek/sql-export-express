@@ -4,7 +4,7 @@ using CsvHelper.Configuration;
 
 namespace Outputs.Csv;
 
-public class Writer : IFileWriter
+public class Writer : IStreamWriter
 {
     public string GetFileName(string tableName)
     {
@@ -19,17 +19,15 @@ public class Writer : IFileWriter
         return $"{safeFilename}.csv";
     }
 
-    public async Task WriteToFile(string filename, IEnumerable<dynamic> rows, OutputSettings outputSettings)
+    public async Task Write(StreamWriter writer, IEnumerable<dynamic> rows, OutputSettings outputSettings)
     {
-        using var writer = new StreamWriter(filename);
-
-        new CsvConfiguration(outputSettings.Locale)
+        var configuration = new CsvConfiguration(outputSettings.Locale)
         {
             Delimiter = outputSettings.CsvDelimiter,
             Escape = outputSettings.DisableEscaping ? '\0' : '"',
-            HasHeaderRecord = true,
+            HasHeaderRecord = writer.BaseStream.Position == 0,
         };
-        using var csv = new CsvWriter(writer, outputSettings.Locale);
+        using var csv = new CsvWriter(writer, configuration, true);
         await csv.WriteRecordsAsync(rows);
     }
 }
