@@ -14,7 +14,7 @@ public class ExportCommand : AsyncCommand<ExportCommandSettings>
 {
     private ConnectionSettings? _connectionSettings;
     private IDbReader? _dbReader;
-    private readonly IFileWriter writer = new Writer();
+    private readonly IStreamWriter writer = new Writer();
 
     public override async Task<int> ExecuteAsync(CommandContext context, ExportCommandSettings settings)
     {
@@ -117,9 +117,11 @@ public class ExportCommand : AsyncCommand<ExportCommandSettings>
         var rows = await _dbReader.FetchAsync(databaseName, table.Name);
         int chunkSize = 100;
         double chunkPercentage = Math.Max(100f / (table.Rows / (double)chunkSize), 100f);
+
+        using var streamWriter = new StreamWriter(filename);
         foreach (var chunk in rows.Chunk(chunkSize))
         {
-            await writer.WriteToFile(filename, chunk, outputSettings);
+            await writer.Write(streamWriter, chunk, outputSettings);
             progressTask.Increment(chunkPercentage);
         }
     }
